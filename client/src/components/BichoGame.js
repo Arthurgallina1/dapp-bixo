@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
-export default function BichoGame({ web3, contract, account }) {
+export default function BichoGame({ web3, contract, account, deployedNetwork }) {
   const [players, setPlayers] = useState([])
+  const [amount, setAmount] = useState(0)
 
   useEffect(() => {
     const getPlayers = async () => {
       const players = await contract.methods.getPlayers().call()
+      const amount = await contract.methods.getContractBalance().call()
       setPlayers(players)
-      console.log(players)
+      setAmount(amount)
+      console.log(amount)
     }
     getPlayers()
   }, [])
@@ -16,23 +19,54 @@ export default function BichoGame({ web3, contract, account }) {
     try {
       await web3.eth.sendTransaction({
         from: account,
-        to: '0x09350e674dE062b3efA48fE4db0D81589b027942',
-        value: 10500,
+        to: deployedNetwork && deployedNetwork.address,
+        value: 1000000000000000000,
       })
       const players = await contract.methods.getPlayers().call()
-      console.log('players', players)
+      const amount = await contract.methods.getContractBalance().call()
+      setAmount(amount)
       setPlayers(players)
     } catch (err) {
-      alert('error on participating')
+      alert('error on participating!')
     }
   }
 
+  const pickPlayers = async () => {
+    try {
+       
+        const players = await contract.methods.getPlayers().call()
+        const amount = await contract.methods.getContractBalance().call()
+
+        console.log(players, amount)
+      } catch (err) {
+        alert('error on random')
+      }
+  }
+
+
+  const pickRandom = async () => {
+    try {
+       
+        const random = await contract.methods.pickWinner().send({ from: account })
+        console.log(random)
+      } catch (err) {
+        alert('error on random')
+        console.log(err)
+      }
+  }
+
+
   return (
     <div>
-      <h1>Jogo do bicho #01</h1>
+      <h1>Jogo#01</h1>
       <div>
-        {players.find((player) => player == account) ? 'Participating' : <button onClick={handleParticipate}>Participar</button>}
+        {players.find((player) => player == account) ? 'Participating!' : <button onClick={handleParticipate}>Participar</button>}
       </div>
+      <div>
+          Pote total: {amount}
+      </div>
+      <button onClick={pickRandom}>random</button>
+      <button onClick={pickPlayers}>balance</button>
       <div>
         <h3>Jogadores:</h3>
         {players && players.map((player) => <p>{player}</p>)}

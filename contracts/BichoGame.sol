@@ -5,6 +5,7 @@ contract BichoGame {
     address public manager;
     address payable[] public players;
     mapping(address => uint256) balances;
+    mapping(address => bool) public playerParticipaing;
 
     constructor() {
         manager = msg.sender;
@@ -12,7 +13,9 @@ contract BichoGame {
 
     receive() external payable {
         // require(msg.value > 100000 wei, "not enough value");
+        require(!playerParticipaing[msg.sender], "player already playing");
         players.push(payable(msg.sender));
+        playerParticipaing[msg.sender] = true;
     }
 
     function getPlayers() public view returns (address payable[] memory) {
@@ -25,5 +28,31 @@ contract BichoGame {
 
     function getContractBalance() public view returns (uint256) {
         return address(this).balance;
+    }
+
+    function random() public view returns (uint256) {
+        return
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.difficulty,
+                        block.timestamp,
+                        players.length
+                    )
+                )
+            );
+    }
+
+    function pickWinner() public {
+        require(msg.sender == manager, "GTO!");
+        require(players.length >= 1, "Not enough player participaing");
+
+        uint256 rand = random();
+        address payable winner;
+        uint256 index = rand % players.length;
+        // return index;
+        winner = players[index];
+        winner.transfer(getContractBalance());
+        players = new address payable[](0); //reset lottery
     }
 }
