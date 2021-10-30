@@ -15,6 +15,10 @@ contract BichoGame {
         players.push(payable(msg.sender));
     }
 
+    function getPlayers() public view returns (address payable[] memory) {
+        return players;
+    }
+
     function getAddrBalance(address addr) public view returns (uint256) {
         return balances[addr];
     }
