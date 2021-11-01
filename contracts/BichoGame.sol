@@ -43,6 +43,8 @@ contract BichoGame {
             );
     }
 
+    function cleanPlayerParticipaing() public {}
+
     function pickWinner() public {
         require(msg.sender == manager, "GTO!");
         require(players.length >= 1, "Not enough player participaing");

@@ -12,7 +12,7 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
       setAmount(amount)
       console.log(amount)
     }
-    getPlayers()
+     getPlayers()
   }, [])
 
   const handleParticipate = async () => {
@@ -44,7 +44,7 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
   }
 
 
-  const pickRandom = async () => {
+  const pickWinner = async () => {
     try {
        
         const random = await contract.methods.pickWinner().send({ from: account })
@@ -65,8 +65,8 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
       <div>
           Pote total: {amount}
       </div>
-      <button onClick={pickRandom}>random</button>
-      <button onClick={pickPlayers}>balance</button>
+      <button onClick={pickWinner}>Ganhador</button>
+      <button onClick={pickPlayers}>Jogadores</button>
       <div>
         <h3>Jogadores:</h3>
         {players && players.map((player) => <p>{player}</p>)}
