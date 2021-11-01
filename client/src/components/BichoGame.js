@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Heading, Button } from "@chakra-ui/react"
 
 export default function BichoGame({ web3, contract, account, deployedNetwork }) {
   const [players, setPlayers] = useState([])
@@ -46,11 +47,10 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
 
   const pickWinner = async () => {
     try {
-       
         const random = await contract.methods.pickWinner().send({ from: account })
         console.log(random)
       } catch (err) {
-        alert('error on random')
+        // alert('error on random')
         console.log(err)
       }
   }
@@ -58,15 +58,15 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
 
   return (
     <div>
-      <h1>Jogo#01</h1>
+      <Heading>Jogo#01</Heading>
       <div>
         {players.find((player) => player == account) ? 'Participating!' : <button onClick={handleParticipate}>Participar</button>}
       </div>
       <div>
           Pote total: {amount}
       </div>
-      <button onClick={pickWinner}>Ganhador</button>
-      <button onClick={pickPlayers}>Jogadores</button>
+      <Button onClick={pickWinner}>Ganhador</Button>
+      <Button onClick={pickPlayers}>Jogadores</Button>
       <div>
         <h3>Jogadores:</h3>
         {players && players.map((player) => <p>{player}</p>)}

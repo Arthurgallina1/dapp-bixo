@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { ChakraProvider } from '@chakra-ui/react'
 import BichoGame from './components/BichoGame'
 import BichoGameContract from './contracts/BichoGame.json'
 import getWeb3 from './getWeb3'
-
 const mockAccs = [
   '0x6e900a494695540490986128Ea0eCAD2E9F00564',
   '0xad26C0574235f05545Ec6fF300Bd6331adfd76Fe',
@@ -60,17 +60,19 @@ export default function App2() {
     return <div>Loading Web3, accounts, and contract...</div>
   }
   return (
-    <div className='App'>
-      <h3>Address</h3>
-      {accounts[0]}
-      {contract && (
-        <BichoGame
-          contract={contract}
-          web3={web3}
-          account={accounts[0]}
-          deployedNetwork={deployedNetwork}
-        />
-      )}
-    </div>
+    <ChakraProvider>
+      <div className='App'>
+        <h3>Address</h3>
+        {accounts[0]}
+        {contract && (
+          <BichoGame
+            contract={contract}
+            web3={web3}
+            account={accounts[0]}
+            deployedNetwork={deployedNetwork}
+          />
+        )}
+      </div>
+    </ChakraProvider>
   )
 }
