@@ -1,4 +1,5 @@
-pragma solidity ^0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.1 <0.9.0;
 
 contract Coin {
     // The keyword "public" makes variables
@@ -26,16 +27,16 @@ contract Coin {
     // Errors allow you to provide information about
     // why an operation failed. They are returned
     // to the caller of the function.
-    error InsufficientBalance(uint requested, uint available);
+    // error InsufficientBalance(uint requested, uint available);
 
     // Sends an amount of existing coins
     // from any caller to an address
     function send(address receiver, uint amount) public {
-        if (amount > balances[msg.sender])
-            revert InsufficientBalance({
-                requested: amount,
-                available: balances[msg.sender]
-            });
+        // if (amount > balances[msg.sender])
+        //     revert InsufficientBalance({
+        //         requested: amount,
+        //         available: balances[msg.sender]
+        //     });
 
         balances[msg.sender] -= amount;
         balances[receiver] += amount;
