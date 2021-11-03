@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Heading, Container as Div } from '@chakra-ui/react'
-import BichoGameContract from '../contracts/BichoGame.json'
+import BichoGameContract from '../contracts/BichoGameV2.json'
 import getWeb3 from '../getWeb3'
 import BichoGame from './BichoGame'
 

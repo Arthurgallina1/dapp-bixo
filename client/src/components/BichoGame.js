@@ -12,7 +12,7 @@ export default function BichoGame({
 
   useEffect(() => {
     const getPlayers = async () => {
-      const players = await contract.methods.getPlayers().call()
+      // const players = await contract.methods.getPlayers().call()
       const amount = await contract.methods.getContractBalance().call()
       setPlayers(players)
       setAmount(amount)
@@ -28,7 +28,7 @@ export default function BichoGame({
         to: deployedNetwork && deployedNetwork.address,
         value: 1000000000000000000,
       })
-      const players = await contract.methods.getPlayers().call()
+      // const players = await contract.methods.getPlayers().call()
       const amount = await contract.methods.getContractBalance().call()
       setAmount(amount)
       setPlayers(players)
@@ -37,16 +37,6 @@ export default function BichoGame({
     }
   }
 
-  const pickPlayers = async () => {
-    try {
-      const players = await contract.methods.getPlayers().call()
-      const amount = await contract.methods.getContractBalance().call()
-
-      console.log(players, amount)
-    } catch (err) {
-      alert('error on random')
-    }
-  }
 
   const pickWinner = async () => {
     try {
@@ -69,7 +59,8 @@ export default function BichoGame({
         )}
       </Box>
       <Box mt={3}>Pote total: {amount}</Box>
-      {players.length > 1 && <Button onClick={pickWinner}>Sortear</Button>}
+      <Button onClick={pickWinner}>Sortear</Button>
+      {/* {players.length > 1 && } */}
       <Box mt={8}>
         <Heading size='md' as='h5'>
           Jogadores:
