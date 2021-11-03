@@ -13,7 +13,7 @@ contract BichoGame {
 
     receive() external payable {
         // require(msg.value > 100000 wei, "not enough value");
-        require(!playerParticipaing[msg.sender], "player already playing");
+        // require(!playerParticipaing[msg.sender], "player already playing");
         players.push(payable(msg.sender));
         playerParticipaing[msg.sender] = true;
     }

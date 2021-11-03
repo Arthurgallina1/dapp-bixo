@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Heading, Button } from "@chakra-ui/react"
+import { Heading, Button, Box } from '@chakra-ui/react'
 
-export default function BichoGame({ web3, contract, account, deployedNetwork }) {
+export default function BichoGame({
+  web3,
+  contract,
+  account,
+  deployedNetwork,
+}) {
   const [players, setPlayers] = useState([])
   const [amount, setAmount] = useState(0)
 
@@ -13,7 +18,7 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
       setAmount(amount)
       console.log(amount)
     }
-     getPlayers()
+    getPlayers()
   }, [])
 
   const handleParticipate = async () => {
@@ -34,43 +39,43 @@ export default function BichoGame({ web3, contract, account, deployedNetwork }) 
 
   const pickPlayers = async () => {
     try {
-       
-        const players = await contract.methods.getPlayers().call()
-        const amount = await contract.methods.getContractBalance().call()
+      const players = await contract.methods.getPlayers().call()
+      const amount = await contract.methods.getContractBalance().call()
 
-        console.log(players, amount)
-      } catch (err) {
-        alert('error on random')
-      }
+      console.log(players, amount)
+    } catch (err) {
+      alert('error on random')
+    }
   }
-
 
   const pickWinner = async () => {
     try {
-        const random = await contract.methods.pickWinner().send({ from: account })
-        console.log(random)
-      } catch (err) {
-        // alert('error on random')
-        console.log(err)
-      }
+      const random = await contract.methods.pickWinner().send({ from: account })
+      console.log(random)
+    } catch (err) {
+      // alert('error on random')
+      console.log(err)
+    }
   }
 
-
   return (
-    <div>
+    <Box>
       <Heading>Jogo#01</Heading>
-      <div>
-        {players.find((player) => player == account) ? 'Participating!' : <button onClick={handleParticipate}>Participar</button>}
-      </div>
-      <div>
-          Pote total: {amount}
-      </div>
-      <Button onClick={pickWinner}>Ganhador</Button>
-      <Button onClick={pickPlayers}>Jogadores</Button>
-      <div>
-        <h3>Jogadores:</h3>
-        {players && players.map((player) => <p>{player}</p>)}
-      </div>
-    </div>
+      <Box mt={3}>
+        {players.find((player) => player == account) ? (
+          'Participating!'
+        ) : (
+          <Button onClick={handleParticipate}>Participar</Button>
+        )}
+      </Box>
+      <Box mt={3}>Pote total: {amount}</Box>
+      {players.length > 1 && <Button onClick={pickWinner}>Sortear</Button>}
+      <Box mt={8}>
+        <Heading size='md' as='h5'>
+          Jogadores:
+        </Heading>
+        {players && players.map((player) => <p key={player}>{player}</p>)}
+      </Box>
+    </Box>
   )
 }
