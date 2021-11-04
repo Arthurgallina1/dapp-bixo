@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Heading, Button, Box } from '@chakra-ui/react'
+import BichoBoard from './BichoBoard'
 
 export default function BichoGame({
   web3,
@@ -10,7 +11,8 @@ export default function BichoGame({
   const [players, setPlayers] = useState([])
   const [amount, setAmount] = useState(0)
   const [animals, setAnimals] = useState([])
-
+  const [selectedCard, setSelectedCard] = useState()
+ 
   useEffect(() => {
     const getPlayers = async () => {
       const players = await contract.methods.getPlayers().call()
@@ -28,7 +30,7 @@ export default function BichoGame({
       //   to: deployedNetwork && deployedNetwork.address,
       //   value: 1000000000000000000,
       // })
-      await contract.methods.participate(1).send({ from: account, value: 4300000000000000000 })
+      await contract.methods.participate(selectedCard).send({ from: account, value: 4300000000000000000 })
       const amount = await contract.methods.getContractBalance().call()
       const players = await contract.methods.getPlayers().call()
       setAmount(amount)
@@ -37,6 +39,11 @@ export default function BichoGame({
     } catch (err) {
       alert('error on participating!')
     }
+  }
+
+
+  const handleCardClick = (id) => {
+    setSelectedCard(id)
   }
 
   const showPlayers = async () => {
@@ -66,10 +73,11 @@ export default function BichoGame({
           <Button onClick={handleParticipate}>Participar</Button>
         )}
       </Box>
+      Card: {selectedCard}
       <Button onClick={showPlayers}>Jogadores</Button>
+      <BichoBoard handleCardClick={handleCardClick} selectedCard={selectedCard} />
       <Box mt={3}>Pote total: {amount}</Box>
       <Button onClick={pickWinner}>Sortear</Button>
-      {/* {players.length > 1 && } */}
       <Box mt={8}>
         <Heading size='md' as='h5'>
           Jogadores:
