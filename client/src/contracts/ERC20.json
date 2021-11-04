@@ -14462,12 +14462,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xFBF572879f673735ECC570ee4822a07773456aB6",
-      "transactionHash": "0x9c340cbf8fcb19ee6386e2f872dd8df89c743b906216e5dfc866b9a79b6d752f"
+      "address": "0xddd1E6Ac03C9d38F9940D556781CAe5340956A7F",
+      "transactionHash": "0x403d7fbc08e037c6062ac658959f86cc216b4a7c79ac61a9e736943289620c45"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T23:01:26.414Z",
+  "updatedAt": "2021-11-03T23:55:21.297Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Implementation of the basic standard token. https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md Originally based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol This implementation emits additional Approval events, allowing applications to reconstruct the allowance status for all accounts just by listening to said events. Note that this isn't required by the specification, and other compliant implementations may not do it.",

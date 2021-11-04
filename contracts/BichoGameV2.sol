@@ -12,14 +12,20 @@ contract BichoGameV2 {
     mapping(address => Player) public whosPlaying;
     Player[] public players;
 
-    receive() external payable {
+    function participate(uint256 animal) public payable {
+        require(animal < 5, "Animal number not valid");
+        require(animal > 0, "Animal number not valid");
         Player memory newPlayer;
         newPlayer.addr = payable(msg.sender);
-        newPlayer.animal = players.length;
+        newPlayer.animal = animal;
         newPlayer.playing = true;
 
         // require(whosPlaying[msg.sender].playing != true, 'Already playing!');
         players.push(newPlayer);
+    }
+
+    function getPlayers() public view returns (Player[] memory) {
+        return players;
     }
 
     function getContractBalance() public view returns (uint256) {
@@ -43,14 +49,11 @@ contract BichoGameV2 {
         require(players.length >= 1, "Not enough player participaing");
 
         uint256 rand = random();
-        // address payable winner;
         Player memory winner;
         uint256 index = rand % players.length;
-        // return index;
         winner = players[index];
         winner.addr.transfer(getContractBalance());
 
-        //players = new Player[](0);  // this doesnt work because players is storage and new Player[](0) is in memory.
         delete players;
     }
 }
