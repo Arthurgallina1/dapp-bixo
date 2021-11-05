@@ -29,7 +29,12 @@ contract Auction {
         startBlock = block.number;
         endBlock = startBlock + 40320;
         ipfsHash = "";
-        bidIncrement = 1000;
+        bidIncrement = 100;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
     }
 
     modifier notOwner() {
@@ -55,7 +60,42 @@ contract Auction {
         }
     }
 
-    function placeBid() public payable {
+    function cancelAuction() public onlyOwner {
+        auctionState = State.Canceled;
+    }
+
+    function finalizeAuction() public {
+        require(auctionState == State.Canceled || block.number > endBlock);
+        require(msg.sender == owner || bids[msg.sender] > 0);
+
+        address payable recipient;
+        uint256 value;
+
+        if (auctionState == State.Canceled) {
+            recipient = payable(msg.sender);
+            value = bids[msg.sender];
+        } else {
+            //ended
+            if (msg.sender == owner) {
+                recipient == owner;
+                value = highestBindingBid;
+            } else {
+                if (msg.sender == highestBidder) {
+                    //bidder owner
+                    recipient = highestBidder;
+                    value = bids[highestBidder] - highestBindingBid;
+                } else {
+                    // other bidders
+                    recipient = payable(msg.sender);
+                    value = bids[msg.sender];
+                }
+            }
+        }
+        bids[recipient] = 0; //reset bids of recipient so next time he calls he won't be a bidder anymore
+        recipient.transfer(value);
+    }
+
+    function placeBid() public payable notOwner afterStart beforeEnd {
         require(auctionState == State.Running, "Auction not running");
         require(msg.value >= 100);
 
@@ -65,6 +105,7 @@ contract Auction {
         bids[msg.sender] = currentBid;
 
         if (currentBid <= bids[highestBidder]) {
+            // your own bid
             highestBindingBid = min(
                 currentBid + bidIncrement,
                 bids[highestBidder]
