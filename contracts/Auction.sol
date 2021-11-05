@@ -2,6 +2,15 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+contract AuctionCreator {
+    Auction[] public auctions;
+
+    function createAuction() public {
+        Auction newAuction = new Auction(msg.sender);
+        auctions.push(newAuction);
+    }
+}
+
 contract Auction {
     address payable public owner;
     uint256 public startBlock;
@@ -23,13 +32,13 @@ contract Auction {
     mapping(address => uint256) public bids;
     uint256 bidIncrement;
 
-    constructor() {
-        owner = payable(msg.sender);
+    constructor(address EOA) {
+        owner = payable(EOA);
         auctionState = State.Running;
         startBlock = block.number;
-        endBlock = startBlock + 40320;
+        endBlock = startBlock + 3;
         ipfsHash = "";
-        bidIncrement = 100;
+        bidIncrement = 1000000000000000000;
     }
 
     modifier onlyOwner() {
@@ -91,16 +100,18 @@ contract Auction {
                 }
             }
         }
+
         bids[recipient] = 0; //reset bids of recipient so next time he calls he won't be a bidder anymore
+
         recipient.transfer(value);
     }
 
     function placeBid() public payable notOwner afterStart beforeEnd {
         require(auctionState == State.Running, "Auction not running");
-        require(msg.value >= 100);
+        require(msg.value >= 100, "Value is not enough");
 
         uint256 currentBid = bids[msg.sender] + msg.value;
-        require(currentBid > highestBindingBid);
+        require(currentBid > highestBindingBid, "Bid not enough");
 
         bids[msg.sender] = currentBid;
 
