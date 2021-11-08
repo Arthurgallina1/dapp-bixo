@@ -9,17 +9,17 @@ interface ERC20Interface {
     function transfer(address to, uint256 value) external returns (bool);
 
     function allowance(address owner, address spender)
-        public
+        external
         view
         returns (uint256);
 
-    function approve(address spender, uint256 value) public returns (bool);
+    function approve(address spender, uint256 value) external returns (bool);
 
     function transferFrom(
         address from,
         address to,
         uint256 value
-    ) public returns (bool);
+    ) external returns (bool);
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -51,7 +51,9 @@ contract Cryptos is ERC20Interface {
         view
         override
         returns (uint256 balance)
-    {}
+    {
+        return balances[tokenOwner];
+    }
 
     function transfer(address to, uint256 tokens)
         public
@@ -94,7 +96,7 @@ contract Cryptos is ERC20Interface {
     function transferFrom(
         address from,
         address to,
-        uint256 value
+        uint256 tokens
     ) public override returns (bool success) {
         require(allowed[from][to] >= tokens);
         require(balances[from] >= tokens);
