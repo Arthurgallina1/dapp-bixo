@@ -8,18 +8,18 @@ interface ERC20Interface {
 
     function transfer(address to, uint256 value) external returns (bool);
 
-    // function allowance(address owner, address spender)
-    //     public
-    //     view
-    //     returns (uint256);
+    function allowance(address owner, address spender)
+        public
+        view
+        returns (uint256);
 
-    // function approve(address spender, uint256 value) public returns (bool);
+    function approve(address spender, uint256 value) public returns (bool);
 
-    // function transferFrom(
-    //     address from,
-    //     address to,
-    //     uint256 value
-    // ) public returns (bool);
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public returns (bool);
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -38,6 +38,7 @@ contract Cryptos is ERC20Interface {
 
     address public founder;
     mapping(address => uint256) public balances;
+    mapping(address => mapping(address => uint256)) allowed;
 
     constructor() {
         totalSupply = 1000000;
@@ -62,6 +63,46 @@ contract Cryptos is ERC20Interface {
         balances[msg.sender] -= tokens;
 
         emit Transfer(msg.sender, to, tokens);
+
+        return true;
+    }
+
+    function allowance(address tokenOwner, address spender)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        return allowed[tokenOwner][spender];
+    }
+
+    function approve(address spender, uint256 tokens)
+        public
+        override
+        returns (bool success)
+    {
+        require(balances[msg.sender] > tokens);
+        require(tokens > 0);
+
+        allowed[msg.sender][spender] = tokens;
+
+        emit Approval(msg.sender, spender, tokens);
+
+        return true;
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public override returns (bool success) {
+        require(allowed[from][to] >= tokens);
+        require(balances[from] >= tokens);
+
+        balances[from] -= tokens;
+        balances[to] += tokens;
+
+        allowed[from][to] -= tokens;
 
         return true;
     }
