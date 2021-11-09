@@ -127,4 +127,66 @@ contract CryptosICO is Cryptos {
         afterEnd,
         halted
     }
+    State public icoState;
+
+    constructor(address payable _deposit) {
+        admin = msg.sender;
+        deposit = _deposit;
+        icoState = State.beforeStart;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "not allowed");
+        _;
+    }
+
+    function halt() public onlyAdmin {
+        icoState = State.halted;
+    }
+
+    function resume() public onlyAdmin {
+        icoState = State.running;
+    }
+
+    function changeDepositAddress(address payable _deposit) public onlyAdmin {
+        deposit = _deposit;
+    }
+
+    function getCurrentState() public view returns (State) {
+        return icoState;
+        // if(icoState == State.halted) {
+        //     return State.halted;
+        // } else if( block.timestamp < saleStart) {
+        // return State.beforeStart;
+        // } else if (block.timestamp >= saleStart && block.timestamp <= saleEnd) {
+        // return State.running;
+        // } else {
+        // return State.afterEnd;
+        // }
+    }
+
+    event Invest(address invester, uint256 value, uint256 tokens);
+
+    //called when received ether by receive()
+    function invest() public payable returns (bool) {
+        icoState = getCurrentState();
+        require(icoState == State.running);
+        require(msg.value >= minInvestment && msg.value <= maxInvestment);
+        raisedAmount += msg.value;
+        require(raisedAmount <= hardCap);
+
+        uint256 tokens = msg.value / tokenPrice;
+
+        balances[msg.sender] += tokens;
+        balances[founder] -= tokens;
+
+        deposit.transfer(msg.value);
+        emit Invest(msg.sender, msg.value, tokens);
+
+        return true;
+    }
+
+    receive() external payable {
+        invest();
+    }
 }
