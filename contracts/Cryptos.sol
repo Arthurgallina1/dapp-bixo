@@ -170,7 +170,7 @@ contract CryptosICO is Cryptos {
     //called when received ether by receive()
     function invest() public payable returns (bool) {
         icoState = getCurrentState();
-        require(icoState == State.running);
+        require(icoState == State.running, "Ico not running");
         require(msg.value >= minInvestment && msg.value <= maxInvestment);
         raisedAmount += msg.value;
         require(raisedAmount <= hardCap);
@@ -188,5 +188,34 @@ contract CryptosICO is Cryptos {
 
     receive() external payable {
         invest();
+    }
+
+    function transfer(address to, uint256 tokens)
+        public
+        override
+        returns (bool success)
+    {
+        require(block.timestamp > tokenTradeStart, "not allowed to sell yet");
+        Cryptos.transfer(to, tokens);
+        //super.transfer(to, tokens <- same things
+        return true;
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokens
+    ) public override returns (bool success) {
+        require(block.timestamp > tokenTradeStart, "not allowed to sell yet");
+        Cryptos.transfer(to, tokens);
+        return true;
+    }
+
+    //anyone can burn the remaining tokens
+    function burn() public returns (bool) {
+        icoState = getCurrentState();
+        require(icoState == State.afterEnd, "ico still running");
+        balances[founder] = 0;
+        return true;
     }
 }
